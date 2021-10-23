@@ -7,7 +7,7 @@ export default (
   next: NextFunction
 ) => {
   // error handler
-  res.send({
+  res.status(400).send({
     message: "Error Occured.",
     data: err,
     timeStamp: new Date(),

@@ -4,10 +4,11 @@
   "description": "Transferring fund and maintaining balance.",
   "main": "dist/index.js",
   "scripts": {
+    "prebuild": "rm -rf dist/",
     "build": "tsc",
     "prestart": "npm run build",
     "start": "node .",
-    "test": "jest --forceExit --runInBand"
+    "test": "npm run build && jest --forceExit --runInBand"
   },
   "repository": {
     "type": "git",

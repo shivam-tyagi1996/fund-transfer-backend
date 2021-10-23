@@ -11,7 +11,7 @@ const accountSchema = new Schema({
   id: Types.ObjectId,
   name: String,
   createdAt: String,
-  products: productSchema,
+  products: Array,
 });
 
 export default model("Account", accountSchema, "Account");

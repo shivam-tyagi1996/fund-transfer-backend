@@ -2,7 +2,7 @@ import supertest from "supertest";
 import Server from "../Server";
 
 const config = {
-  mongoUri: "mongodb://localhost:27017/basic-svc",
+  mongoUri: "mongodb://localhost:27017/db",
   nodeEnv: "test",
   port: "8585",
 };
@@ -18,17 +18,35 @@ describe("Test Cases", () => {
     });
   });
 
-  it("should create a user", async () => {
+  it("health-check route", async () => {
     const response = await request
       .get("/health-check")
       .set("Accept", "application/json");
-    // .expect("Content-Type", "application/json; charset=utf-8");
-    console.log(
-      "res...........",
-      response.body,
-      response.data,
-      response.status
-    );
-    // expect(response.body).toBe("aa");
+
+      expect(response.status).toBe(200);
+  });
+  it("fund transfer successful", async () => {
+    const response = await request
+      .post("/api/transfer")
+      .send({
+        "amount": 500,
+        "originAccount": "123",
+        "destinationAccount": "123"
+      })
+      .set("Accept", "application/json");
+      console.log(response.body);
+      expect(response.status).toBe(200);
+  });
+  it("fund transfer fail", async () => {
+    const response = await request
+      .post("/api/transfer")
+      .send({
+        "amount": 50000,
+        "originAccount": "123",
+        "destinationAccount": "123"
+      })
+      .set("Accept", "application/json");
+
+      expect(response.status).toBe(400);
   });
 });

@@ -31,6 +31,7 @@ export default class Account {
       // Checking if amount is available in account to transfer.
       temp = await this.database.findOne({ _id: req.user.id });
       data = JSON.parse(JSON.stringify(temp));
+
       const product = data.products.find(
         (e: any) => e.accountNumber === body.originAccount
       );
@@ -54,7 +55,7 @@ export default class Account {
       await this.database.update({ _id: req.user.id }, temp);
 
       // Transferring funds (creating entry in statement)
-      const result = await this.transfer(data);
+      const result = await this.transfer(body);
 
       res.send(result);
     } catch (e) {
@@ -63,8 +64,8 @@ export default class Account {
         temp = {
           ...data,
           product: data.product.map((e: any) => {
-            if (e.accountNumber === body.accountNumber) {
-              e.balance = e.balance - body.amount;
+            if (e.accountNumber === body.originAccount) {
+              e.balance = e.balance + body.amount;
             }
             return e;
           }),
@@ -75,16 +76,26 @@ export default class Account {
     }
   };
 
-  private async transfer(details: any, counter: number = 0): Promise<any> {
+  private async transfer(body: any, counter: number = 0): Promise<any> {
     try {
       // add funds to destination account
-      console.log("transfer");
-      throw "A";
+      let temp = await this.database.findOne({ "products.accountNumber": body.destinationAccount });
+      temp = JSON.parse(JSON.stringify(temp));
+      temp = {
+        ...temp,
+        products: temp.products.map((e: any) => {
+          if (e.accountNumber === body.destinationAccount) {
+            e.balance = e.balance + body.amount;
+          }
+          return e;
+        })
+      }
+      await this.database.update({ _id: temp._id }, temp);
+
       return { message: "Transfer Successful." };
     } catch (e) {
-      console.log("Error", e, counter);
-      if (counter < 2) {
-        return this.transfer(details, counter + 1);
+      if (counter < 2) {                  // Retry logic
+        return this.transfer(body, counter + 1);
       } else {
         throw new Error("Unable to transfer funds");
       }

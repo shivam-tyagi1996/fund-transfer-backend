@@ -10,7 +10,7 @@ module.exports = {
     "^.+\\.js$": "babel-jest",
   },
   transformIgnorePatterns: ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"],
-  testMatch: ["**/*.spec.(ts|js)"],
+  testMatch: ["**/*.spec.js"],
   testEnvironment: "node",
   // testResultsProcessor: "jest-sonar-reporter",
   collectCoverageFrom: [

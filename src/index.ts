@@ -1,18 +1,39 @@
-import express from 'express';
-// import mainApp  from './mainApp';
-import bodyParser from 'body-parser';
+// import express from "express";
+// import bodyParser from "body-parser";
 
-const app = express();
-const port = 3000
+// import { Login } from "./controller";
+// import { errorHandler } from "./helper";
+// import router from "./router";
 
-app.use(bodyParser.json());
-        app.use(bodyParser.urlencoded({ extended: true }));
+// const app = express();
+// const port = 3000;
+// const login = Login.getInstance();
 
-app.post('/', (req: any, res: any) => {
-  console.log("rrrrrrrrrrr", req.body, "hello");
-//   mainApp(req, res);
-})
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
-})
+// app.get("/health-check", (req: any, res: any) => {
+//   res.send({ message: "Welcome to Fund Management Application." });
+// });
+
+// app.post("/login", login.checkLogin);
+
+// app.all("*", login.checkToken);
+// app.use("/api", router);
+
+// app.use(errorHandler);
+
+// app.listen(port, () => {
+//   console.log(`Example app listening at http://localhost:${port}`);
+// });
+
+import Server from "./Server";
+
+const server = new Server({
+  mongoUri: "mongodb://localhost:27017/db",
+  port: 4000,
+});
+
+server.init().then(() => {
+  server.start();
+});

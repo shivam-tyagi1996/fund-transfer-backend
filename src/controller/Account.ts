@@ -59,7 +59,7 @@ export default class Account {
       res.send(result);
     } catch (e) {
       // Re-credit the amount
-      if ((e.message = "Unable to transfer funds")) {
+      if ((e.message === "Unable to transfer funds")) {
         temp = {
           ...data,
           product: data.product.map((e: any) => {

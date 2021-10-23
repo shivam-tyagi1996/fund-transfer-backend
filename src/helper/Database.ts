@@ -2,7 +2,6 @@ import { connect, connection, disconnect } from "mongoose";
 
 export default class Database {
   public static open(mongoUri: string) {
-    console.log(mongoUri, "1212121212121212");
     return new Promise((resolve, reject) => {
       // Mongoose options
       const options = {

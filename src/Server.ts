@@ -3,6 +3,7 @@ import cors from "cors";
 import express from "express";
 
 import { Login } from "./controller";
+import { errorHandler } from "./helper";
 import Database from "./helper/Database";
 import router from "./router";
 
@@ -16,7 +17,6 @@ class Server {
 
   public async init() {
     await Database.open(this.configurations.mongoUri);
-    this.basicRoutes();
     this.initCors();
     this.initJsonParser();
     this.setupRoutes();
@@ -44,20 +44,18 @@ class Server {
     );
   }
 
-  private basicRoutes() {
+  private setupRoutes() {
     this.app.get("/health-check", (req: any, res: any) => {
       res
-        .status(204)
+        .status(200)
         .send({ message: "Welcome to Fund Management Application." });
     });
 
     this.app.post("/login", this.login.checkLogin);
 
     this.app.all("*", this.login.checkToken);
-  }
-
-  private setupRoutes() {
-    this.app.use(router);
+    this.app.use("/api", router);
+    this.app.use(errorHandler);
   }
 }
 

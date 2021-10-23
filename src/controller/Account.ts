@@ -12,7 +12,7 @@ export default class Account {
   private database: any;
 
   private constructor() {
-    this.database = new AccountDB();
+    this.database = AccountDB;
   }
 
   getAccountDetails(req: Request, res: Response, next: NextFunction) {
@@ -29,12 +29,12 @@ export default class Account {
     const body: any = req.body;
     try {
       // Checking if amount is available in account to transfer.
-      temp = await this.database.findOne({ id: req.user.id });
+      temp = await this.database.findOne({ _id: req.user.id });
       data = JSON.parse(JSON.stringify(temp));
-      const product = data.product.filter(
+      const product = data.products.find(
         (e: any) => e.accountNumber === body.originAccount
-      )[0];
-      if (!product.length) {
+      );
+      if (!product) {
         throw new Error("Unable to find the Account.");
       }
       if (product.balance < body.amount) {
@@ -44,14 +44,14 @@ export default class Account {
       // Updating remaining amount in the account.
       temp = {
         ...data,
-        product: data.product.map((e: any) => {
+        product: data.products.map((e: any) => {
           if (e.accountNumber === body.originAccount) {
             e.balance = e.balance - body.amount;
           }
           return e;
         }),
       };
-      await this.database.update({ id: req.user.id }, temp);
+      await this.database.update({ _id: req.user.id }, temp);
 
       // Transferring funds (creating entry in statement)
       const result = await this.transfer(data);
@@ -69,7 +69,7 @@ export default class Account {
             return e;
           }),
         };
-        await this.database.update({ id: req.user.id }, temp);
+        await this.database.update({ _id: req.user.id }, temp);
       }
       next(e.message);
     }
